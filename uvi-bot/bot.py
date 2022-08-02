@@ -7,8 +7,8 @@ import time
 import UVI
 
 repo_name = os.environ['GH_REPO']
-issues_url = "https://api.github.com/repos/%s/issues" % repo_name
-repo_url = "https://github.com/%s.git" % repo_name
+issues_url = f"https://api.github.com/repos/{repo_name}/issues"
+repo_url = f"https://github.com/{repo_name}.git"
 username = os.environ['GH_USERNAME']
 
 
@@ -29,14 +29,14 @@ def main():
 
             if re.search('(UVI|CAN)-\d{4}-\d+', i.title):
                 # There shouldn't be a UVI/CAN ID in the title, bail on this issue
-                print("Found an ID in the title for issue %s" % i.id)
+                print(f"Found an ID in the title for issue {i.id}")
                 continue
 
             if not uvi_repo.approved_user(user_name=i.creator, user_id=i.creator_id):
-                print("Issue %s is not created by an approved user" % (i.id))
+                print(f"Issue {i.id} is not created by an approved user")
                 continue
 
-            print("Updating issue %s" % i.id)
+            print(f"Updating issue {i.id}")
             uvi_id = uvi_repo.add_uvi(i)
             i.assign_uvi(uvi_id, uvi_repo.approved_user(i.get_reporter()))
 
@@ -48,7 +48,7 @@ def main():
                 uvi_repo.can_to_uvi(i)
                 i.can_to_uvi()
             else:
-                print("%s is unapproved for %s" % (approver, i.id))
+                print(f"{approver} is unapproved for {i.id}")
 
         uvi_repo.close()
 

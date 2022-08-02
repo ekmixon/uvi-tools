@@ -13,6 +13,7 @@ import datetime
 
 # This method will be used by the mock to replace requests.get
 def mocked_requests_get(*args, **kwargs):
+
     class MockResponse:
         def __init__(self, status_code):
             self.status_code = status_code
@@ -26,11 +27,11 @@ def mocked_requests_get(*args, **kwargs):
         def raise_for_status(self):
             pass
 
-    if args[0] == 'https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-1000-0001':
+    if args[0] in [
+        'https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-1000-0001',
+        'https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-1000-0002',
+    ]:
         return MockResponse(200)
-    elif args[0] == 'https://services.nvd.nist.gov/rest/json/cve/1.0/CVE-1000-0002':
-        return MockResponse(200)
-
     return MockResponse(404)
 
 class TestNVD(unittest.TestCase):
@@ -62,7 +63,7 @@ class TestNVD(unittest.TestCase):
         self.assertEqual(nvd.total, 40)
 
         count = 0
-        for i in nvd:
+        for _ in nvd:
             count = count + 1
 
         self.assertEqual(count, 40)

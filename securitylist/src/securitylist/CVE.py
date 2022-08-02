@@ -53,7 +53,7 @@ class CVE:
         (year, just_id) = self.id.split('-')[1:]
 
         id_int = int(just_id)
-        thousand_dir = "%dxxx" % int(id_int / 1000)
+        thousand_dir = "%dxxx" % (id_int // 1000)
 
         the_path = os.path.join(self.path, year, thousand_dir)
         if create is True:
@@ -61,6 +61,4 @@ class CVE:
 
 
         id_file = f"{self.id}.json"
-        the_filename = os.path.join(the_path, id_file)
-
-        return the_filename
+        return os.path.join(the_path, id_file)

@@ -37,11 +37,7 @@ class NVD:
         else:
             self.start_time = start
 
-        if end is None:
-            self.end_time = self.__get_time__(self.now)
-        else:
-            self.end_time = end
-
+        self.end_time = self.__get_time__(self.now) if end is None else end
         self.get_page(0)
 
         self.total = self.data["totalResults"]
@@ -54,11 +50,7 @@ class NVD:
         if (datetime.datetime.utcnow() - self.last_update).seconds < 5:
             time.sleep(4)
 
-        if page > 0:
-            self.index = self.page_size * page
-        else:
-            self.index = 0
-
+        self.index = self.page_size * page if page > 0 else 0
         self.payload = {
             "startIndex": self.index,
             "resultsPerPage": 500,

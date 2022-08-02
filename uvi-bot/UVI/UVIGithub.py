@@ -17,11 +17,7 @@ def get_new_issues(issues_url):
 
     issues = resp.json()
 
-    to_return = []
-    for i in issues:
-        to_return.append(Issue(i))
-
-    return to_return
+    return [Issue(i) for i in issues]
 
 def get_approved_can_issues(issues_url):
     auth = (os.environ['GH_USERNAME'], os.environ['GH_TOKEN'])
@@ -37,9 +33,5 @@ def get_approved_can_issues(issues_url):
 
     issues = resp.json()
 
-    to_return = []
-    for i in issues:
-        to_return.append(Issue(i))
-
-    return to_return
+    return [Issue(i) for i in issues]
 

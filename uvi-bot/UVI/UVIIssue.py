@@ -25,18 +25,18 @@ class Issue:
         comments = self.get_comments()
         comments.reverse()
         for i in comments:
-            if i['user']['login'] == os.environ['GH_USERNAME']:
-                if i['body'].startswith('This issue has been assigned'):
-                    match = re.search('((UVI|CAN)-\d{4}-\d+)', i['body'])
-                    uvi_id = match.groups()[0]
-                    return uvi_id
+            if i['user']['login'] == os.environ['GH_USERNAME'] and i[
+                'body'
+            ].startswith('This issue has been assigned'):
+                match = re.search('((UVI|CAN)-\d{4}-\d+)', i['body'])
+                return match.groups()[0]
         return None
 
     def get_events(self):
 
         events = []
         page = 0
-        while(True):
+        while True:
             params = {
                     'per_page': 100,
                     'page': page
@@ -45,16 +45,15 @@ class Issue:
             resp.raise_for_status()
             if len(resp.json()) == 0:
                 break
-            else:
-                page = page + 1
-                events.extend(resp.json())
+            page = page + 1
+            events.extend(resp.json())
 
         return events
 
     def get_comments(self):
         comments = []
         page = 0
-        while(True):
+        while True:
             params = {
                     'per_page': 100,
                     'page': page
@@ -63,9 +62,8 @@ class Issue:
             resp.raise_for_status()
             if len(resp.json()) == 0:
                 break
-            else:
-                page = page + 1
-                comments.extend(resp.json())
+            page = page + 1
+            comments.extend(resp.json())
 
         return comments
 
@@ -78,12 +76,11 @@ class Issue:
             if i['event'] == 'labeled' and i['label']['name'] == 'approved':
                 approver = i['actor']['login']
                 approver_id = i['actor']['id']
-                return "%s:%s" % (approver, approver_id)
+                return f"{approver}:{approver_id}"
 
     def get_reporter(self):
         data = self.get_uvi_json()
-        the_reporter = "%s:%s" % (data['reporter'], data['reporter_id'])
-        return the_reporter
+        return f"{data['reporter']}:{data['reporter_id']}"
 
     def get_uvi_json(self):
         uvi_json = ""
@@ -95,8 +92,7 @@ class Issue:
             elif found_json is True:
                 uvi_json = uvi_json + l
 
-        uvi_data = json.loads(uvi_json)
-        return uvi_data
+        return json.loads(uvi_json)
 
     def add_comment(self, comment):
         body = {
@@ -119,7 +115,7 @@ class Issue:
         # Get the path to the file
         year = can_id.split('-')[1]
         id_str = can_id.split('-')[2]
-        uvi_id = "UVI-%s-%s" % (year, id_str)
+        uvi_id = f"UVI-{year}-{id_str}"
 
         self.title = self.title.replace(can_id, uvi_id)
         body = {
@@ -135,13 +131,9 @@ class Issue:
     def assign_uvi(self, uvi_id, approved_user = False):
 
         # Add a comment to the issue
-        self.add_comment("This issue has been assigned %s" % uvi_id)
+        self.add_comment(f"This issue has been assigned {uvi_id}")
 
-                # Modify the title and labels
-        body = {
-            "title": "[%s] %s" % (uvi_id, self.title),
-            "labels": ["assigned"]
-        }
+        body = {"title": f"[{uvi_id}] {self.title}", "labels": ["assigned"]}
 
         headers = {
             "accept": "application/json"

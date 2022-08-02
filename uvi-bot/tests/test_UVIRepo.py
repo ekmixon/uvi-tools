@@ -33,7 +33,7 @@ class FakeIssue:
         return self.json
 
     def get_reporter(self):
-        return "%s:%s" % (self.json['reporter'], self.json['reporter_id'])
+        return f"{self.json['reporter']}:{self.json['reporter_id']}"
 
     def get_uvi_id(self):
         return self.uvi

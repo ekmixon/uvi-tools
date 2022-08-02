@@ -8,7 +8,7 @@ import json
 def main():
 
     if len(sys.argv) != 4:
-        print("Usage: %s output_dir input_dir namespace" % sys.argv[0])
+        print(f"Usage: {sys.argv[0]} output_dir input_dir namespace")
         print()
         sys.exit(1)
 
@@ -24,10 +24,7 @@ def main():
         if '.git' in root:
             continue
 
-        for i in f_names:
-            if 'UVI-' in i:
-                dwf_files.append(os.path.join(root, i))
-
+        dwf_files.extend(os.path.join(root, i) for i in f_names if 'UVI-' in i)
     # We need to find a way to only pull in updates
 
     for f in dwf_files:
